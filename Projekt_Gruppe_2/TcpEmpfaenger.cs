@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
+using System.Net;
 
 namespace Projekt_Gruppe_2
 {    
@@ -19,7 +20,7 @@ namespace Projekt_Gruppe_2
         public void empfangen(int port)
         {
             //wir wollen von allen empfangen können, deshalb IPAddress.Any
-            TcpListener empfaenger = new TcpListener(System.Net.IPAddress.Any, port); 
+            TcpListener empfaenger = new TcpListener(IPAddress.Any, port); 
 
             //starten des TCPListeners
             empfaenger.Start();

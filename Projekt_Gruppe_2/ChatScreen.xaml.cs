@@ -23,7 +23,7 @@ using WpfAnimatedGif;
 
 namespace Projekt_Gruppe_2
 {
-    
+
     /// <summary>
     /// Interaktionslogik für ChatScreen.xaml
     /// </summary>
@@ -40,18 +40,18 @@ namespace Projekt_Gruppe_2
         AliasEmpfänger empf = new AliasEmpfänger();
         TcpSender sender1 = new TcpSender();
         Thread thread1 = new Thread(threadAufgabe);
+
         public ChatScreen()
         {
             empf.AliasEmpf = Globals.empfName;
             InitializeComponent();
             lblNameEmpf.Content = empf.AliasEmpf;
-            
-            thread1.Start();            
-            
+
+            thread1.Start();
         }
-        
+
         private void btnSenden_Click(object sender, RoutedEventArgs e)
-        {         
+        {
 
             if (string.IsNullOrEmpty(message.DataFormat))
             {
@@ -63,6 +63,7 @@ namespace Projekt_Gruppe_2
                 //setzte vom Objekt den Payload
                 message.Payload = payload;
             }
+
 
             //setzte vom Objekt die aktuelle Zeit
             DateTime localDate = DateTime.Now;
@@ -79,30 +80,40 @@ namespace Projekt_Gruppe_2
                 //setzte vom Objekt die IP-Empfänger auf die gefundene Ip-Adresse
                 message.IPSender = localIP;
             }
-
+            
             //erstelle aus dem Objekt einen String
-            string stringjson = JsonConvert.SerializeObject(message);
+                string stringjson = JsonConvert.SerializeObject(message);
+        
 
-            //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
-            sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
-
-            //setzte DataFormat wieder auf null
-            message.DataFormat = string.Empty;
-
-            DateTime datetime = UnixTimeStampToDateTime(message.TimestampUnix);
-            string date = datetime.ToString("yyyy-MM-dd");
-            if (date == Globals.date)
+            if (textboxNachricht.Text != string.Empty)
             {
-                string time = datetime.ToString("HH:mm:ss");
-                listChat.Items.Add(time+ " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+                //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
+                sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
+            
+                //setzte DataFormat wieder auf null
+                message.DataFormat = string.Empty;
+
+                DateTime datetime = UnixTimeStampToDateTime(message.TimestampUnix);
+                string date = datetime.ToString("yyyy-MM-dd");
+                if (date == Globals.date)
+                {
+                    string time = datetime.ToString("HH:mm:ss");
+                    listChat.Items.Add(time+ " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+                }
+                else
+                {
+                    listChat.Items.Add(datetime+ " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+                    Globals.date = date;
+                }
+                textboxNachricht.Clear();
+                listChat.Items.Add(Globals.Payload);
+                Globals.Payload = string.Empty;
             }
-            else
+            else if (textboxNachricht.Text == string.Empty)
             {
-                listChat.Items.Add(datetime+ " " + Globals.AliasSender + ": " + textboxNachricht.Text);
-                Globals.date = date;
+                MessageBox.Show("Bitte gib eine Nachricht ein.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            textboxNachricht.Clear();
-            listChat.Items.Add(Globals.Payload);
+            
         }
 
         public static void threadAufgabe()
