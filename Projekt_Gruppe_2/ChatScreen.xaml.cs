@@ -81,14 +81,17 @@ namespace Projekt_Gruppe_2
                 //setzte vom Objekt die IP-Empfänger auf die gefundene Ip-Adresse
                 message.IPSender = localIP;
             }
-            
-            //erstelle aus dem Objekt einen String
+                
+                //erstelle aus dem Objekt einen String
                 string stringjson = JsonConvert.SerializeObject(message);
         
 
             
-                //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
-                sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
+            //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
+            sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
+
+            //füge die Nachricht zur Liste hinzu
+            Globals.messageList.Add(message);
             
                 //setzte DataFormat wieder auf null
                 message.DataFormat = string.Empty;

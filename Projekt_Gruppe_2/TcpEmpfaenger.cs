@@ -51,6 +51,7 @@ namespace Projekt_Gruppe_2
 
                     //aus dem String wieder ein Objekt der Klasse Message machen
                     Message message = JsonConvert.DeserializeObject<Message>(nachricht);
+                    Globals.messageList.Add(message);
 
                     if (message.DataFormat == "textnachricht")
                     {

@@ -31,13 +31,14 @@ namespace Projekt_Gruppe_2
         public static string Payload;
         public static string date;
         public static string fillList;
+        public static List<Message> messageList;
+        public static int messageCounter;
     }
 
     public partial class Verbindung : Window
     { 
         Message message = new Message()
         {
-            DataFormat = ".txt",
             Port = 13000
         };
         
