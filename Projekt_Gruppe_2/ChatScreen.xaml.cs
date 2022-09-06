@@ -19,7 +19,7 @@ using System.Windows.Shapes;
 using Projekt_Gruppe_2_test;
 using System.Threading;
 using WpfAnimatedGif;
-
+using System.ComponentModel;
 
 namespace Projekt_Gruppe_2
 {
@@ -45,14 +45,15 @@ namespace Projekt_Gruppe_2
         {
             empf.AliasEmpf = Globals.empfName;
             InitializeComponent();
-            lblNameEmpf.Content = empf.AliasEmpf;
-
-            thread1.Start();
+            lblNameEmpf.Content = "Chat mit " + empf.AliasEmpf;
+            
+            thread1.Start();           
+            
         }
 
         private void btnSenden_Click(object sender, RoutedEventArgs e)
         {
-
+            listChat.HorizontalContentAlignment = HorizontalAlignment.Left;
             if (string.IsNullOrEmpty(message.DataFormat))
             {
                 message.DataFormat = "textnachricht";
@@ -85,63 +86,43 @@ namespace Projekt_Gruppe_2
                 string stringjson = JsonConvert.SerializeObject(message);
         
 
-            if (textboxNachricht.Text != string.Empty)
-            {
+            
                 //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
                 sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
             
                 //setzte DataFormat wieder auf null
                 message.DataFormat = string.Empty;
-
+            if (textboxNachricht.Text != string.Empty)
+            {
                 DateTime datetime = UnixTimeStampToDateTime(message.TimestampUnix);
                 string date = datetime.ToString("yyyy-MM-dd");
                 if (date == Globals.date)
                 {
                     string time = datetime.ToString("HH:mm:ss");
-                    listChat.Items.Add(time+ " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+                    listChat.Items.Add(time + " " + Globals.AliasSender + ": " + textboxNachricht.Text);
                 }
                 else
                 {
-                    listChat.Items.Add(datetime+ " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+                    listChat.Items.Add(datetime + " " + Globals.AliasSender + ": " + textboxNachricht.Text);                                
                     Globals.date = date;
                 }
-                textboxNachricht.Clear();
-                listChat.Items.Add(Globals.Payload);
-                Globals.Payload = string.Empty;
-            }
+            }   
             else if (textboxNachricht.Text == string.Empty)
             {
                 MessageBox.Show("Bitte gib eine Nachricht ein.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+            textboxNachricht.Clear();
+                    
             
         }
 
         public static void threadAufgabe()
-        {
+        {            
             TcpEmpfaenger empfaenger = new TcpEmpfaenger();
             int port = 13000;
-            empfaenger.empfangen(port);
+            empfaenger.empfangen(port);            
         }
-
-
-        /*//message.Payload = textboxTest.Text;
-        string stringjson = JsonConvert.SerializeObject(message);
-        ausgabeTest.Text = stringjson;
-
-        using (StreamWriter file = File.CreateText(@"C:\Users\user\Documents\message.json"))
-        {
-            string _file = Convert.ToString(file);
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(file, message);
-        }*/
-
-
-        public static Message messageReader(string path)
-        {
-            string json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<Message>(json);
-        }
-                
+                        
 
         private void textboxNachricht_GotMouseCapture(object sender, MouseEventArgs e)
         {
@@ -217,6 +198,22 @@ namespace Projekt_Gruppe_2
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
+        }
+
+        private void btnAktualisieren_Click(object sender, RoutedEventArgs e)
+        {
+            listChat.HorizontalContentAlignment = HorizontalAlignment.Right;
+            //while (true)
+            //{
+                //if (Globals.Payload != string.Empty)
+                //{
+                    listChat.Items.Add(Globals.Payload);
+                    Globals.Payload = string.Empty;
+
+            //}
+            //else btnAktualisieren_Click(sender, e);
+            //}
+            
         }
     }
 

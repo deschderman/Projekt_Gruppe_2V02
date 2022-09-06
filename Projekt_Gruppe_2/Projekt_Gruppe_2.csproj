@@ -15,10 +15,12 @@
 
   <ItemGroup>
     <None Remove="Bilder\confetti-45.gif" />
+    <None Remove="Bilder\emoji-background.png" />
     <None Remove="Bilder\gamepad.ico" />
     <None Remove="Bilder\party.ico" />
     <None Remove="Bilder\plus.ico" />
     <None Remove="Bilder\return.ico" />
+    <None Remove="Bilder\sync.ico" />
     <None Remove="Bilder\wechat2.ico" />
   </ItemGroup>
 
@@ -30,10 +32,12 @@
 
   <ItemGroup>
     <Resource Include="Bilder\confetti-45.gif" />
+    <Resource Include="Bilder\emoji-background.png" />
     <Resource Include="Bilder\gamepad.ico" />
     <Resource Include="Bilder\party.ico" />
     <Resource Include="Bilder\plus.ico" />
     <Resource Include="Bilder\return.ico" />
+    <Resource Include="Bilder\sync.ico" />
     <Resource Include="Bilder\wechat2.ico" />
   </ItemGroup>
 

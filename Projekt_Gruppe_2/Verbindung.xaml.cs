@@ -30,6 +30,7 @@ namespace Projekt_Gruppe_2
         public static string AliasSender;
         public static string Payload;
         public static string date;
+        public static string fillList;
     }
 
     public partial class Verbindung : Window

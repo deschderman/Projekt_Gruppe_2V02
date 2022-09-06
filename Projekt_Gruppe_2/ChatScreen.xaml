@@ -10,9 +10,10 @@
         Icon="Bilder/wechat2.ico"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         Title="Chat-App  -  ChatScreen" Height="450" Width="500">
-    
 
+    
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.1*"/>
             <ColumnDefinition Width="1*"/>
@@ -28,13 +29,16 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Border Background="#FF82B36C" Grid.RowSpan="6" Grid.ColumnSpan="6">
+        <Border Background="CornflowerBlue" Grid.RowSpan="6" Grid.ColumnSpan="6">
             <Image x:Name="konfettiGif" gif:ImageBehavior.AnimatedSource="Bilder/confetti-45.gif" Visibility="Hidden"/>
         </Border>
-        <TextBlock x:Name="ausgabeTest" Height="100" VerticalAlignment="Top"/>
-        <ListBox x:Name="listChat" BorderBrush="Gray" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="3"/>
-        <TextBox x:Name="textboxNachricht" FontFamily="gotham" GotMouseCapture="textboxNachricht_GotMouseCapture" Margin="0,0,100,0" KeyDown="textboxNachricht_KeyDown" Text="Deine Nachricht..." BorderBrush="Gray"  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" />
-        <Button x:Name="btnSenden" Style="{StaticResource RoundButtonTemplate}" Height="30" Width="80" Cursor="Hand" Grid.Column="3" Grid.Row="4" Click="btnSenden_Click" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Senden"/>
+        <ListBox x:Name="listChat" ItemsSource="{Binding Path=Text, ElementName=textboxNachricht}" FontFamily="helvetica"  Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="3" Opacity="0.9">
+            <ListBox.Resources>
+                <Image x:Key="g" Source="Bilder/emoji-background.png"/>
+            </ListBox.Resources>
+        </ListBox>
+        <TextBox x:Name="textboxNachricht" Opacity="0.9" FontFamily="helvetica" GotMouseCapture="textboxNachricht_GotMouseCapture" Margin="0,0,100,0" KeyDown="textboxNachricht_KeyDown" Text="Deine Nachricht..."  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" />
+        <Button x:Name="btnSenden" Style="{StaticResource RoundButtonTemplate}" Height="40" Width="80" Cursor="Hand" Grid.Column="3" Grid.Row="4" Click="btnSenden_Click" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Senden"/>
         <Button x:Name="btnData" Style="{StaticResource RoundButtonTemplate}" Click="btnData_Click" Width="30" Height="30" Grid.Column="1" Grid.Row="5" Cursor="Hand" HorizontalAlignment="Left" Background="Transparent">
             <StackPanel>
                 <Image Source="Bilder/gamepad.ico"/>
@@ -45,12 +49,17 @@
                 <Image Source="Bilder/return.ico"/>
             </StackPanel>
         </Button>
-        <Label x:Name="lblNameEmpf" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Width="80" Height="40"/>
-        <Button x:Name="btnKonfetti" Style="{StaticResource RoundButtonTemplate}" Grid.Column="2" Grid.Row="5" Height="40" Width="40" Click="btnKonfetti_Click">
+        <Label x:Name="lblNameEmpf" FontSize="22"  Style="{StaticResource Label}" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.ColumnSpan="2" Width="220" Height="40"/>
+        <Button x:Name="btnKonfetti" Background="Transparent" Style="{StaticResource RoundButtonTemplate}" Grid.Column="2" Grid.Row="5" Height="30" Width="30" Click="btnKonfetti_Click">
             <StackPanel>
                 <Image Source="Bilder/party.ico"/>
             </StackPanel>            
         </Button>
-        
+        <Button x:Name="btnAktualisieren" Background="Transparent" Style="{StaticResource RoundButtonTemplate}" Grid.Column="3" Grid.Row="0" Height="50" Width="50" HorizontalAlignment="Right" Click="btnAktualisieren_Click" Cursor="Hand">
+            <StackPanel>
+                <Image Source="Bilder/sync.ico"/>
+            </StackPanel>
+        </Button>
+
     </Grid>
 </Window>

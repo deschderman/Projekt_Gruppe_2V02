@@ -26,7 +26,7 @@ namespace Projekt_Gruppe_2
             empfaenger.Start();
 
             //zum Lesen der Nachricht
-            Byte[] bytes = new Byte[256]; 
+            Byte[] bytes = new Byte[31575]; 
             string nachricht = null;
 
             while (true)
@@ -41,8 +41,7 @@ namespace Projekt_Gruppe_2
                 NetworkStream stream = client.GetStream();
                 int i;
 
-                //DateTime localDate = DateTime.Now;
-                //message1.TimestampUnix = localDate;
+                
 
                 //den empfangenen Bytearray durchgehen
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
