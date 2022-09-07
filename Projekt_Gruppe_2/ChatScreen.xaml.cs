@@ -46,7 +46,8 @@ namespace Projekt_Gruppe_2
         TcpSender sender1 = new TcpSender();
         public ChatScreen()
         {
-            Thread thread1 = new Thread(threadAufgabe);   
+            Thread thread1 = new Thread(threadAufgabe);
+            thread1.IsBackground = true;
             empf.AliasEmpf = Globals.empfName;
             InitializeComponent();
             lblNameEmpf.Content = "Chat mit " + empf.AliasEmpf;
