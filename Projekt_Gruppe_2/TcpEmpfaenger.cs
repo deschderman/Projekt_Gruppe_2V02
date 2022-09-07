@@ -9,14 +9,16 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
 using System.Net;
+using System.Windows;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace Projekt_Gruppe_2
 {    
 
 
     public class TcpEmpfaenger
-    {
-        Message message1 = new Message();
+    {        
         public void empfangen(int port)
         {
             //wir wollen von allen empfangen können, deshalb IPAddress.Any
@@ -52,6 +54,8 @@ namespace Projekt_Gruppe_2
                     //aus dem String wieder ein Objekt der Klasse Message machen
                     Message message = JsonConvert.DeserializeObject<Message>(nachricht);
 
+                    Globals.messageList.Add(message);
+                    
                     if (message.DataFormat == "textnachricht")
                     {
                         //aus dem Bytearray des Payloads sollen auch wieder die ursprünglichen Charakter hergestellt werden
@@ -88,7 +92,21 @@ namespace Projekt_Gruppe_2
                             stream1.Write(message.Payload, 0, message.Payload.Length);
                         }
                     }
+
+                    
+                    //ChatScreen cs = Application.Current.MainWindow as ChatScreen;
+                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,new Action(() => cs.AddItem(Globals.Payload)));
+
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { ChatScreen chatScreen = new ChatScreen(); }));
+
+                    //ChatScreen chatScreen = new ChatScreen();
+                    //chatScreen.AddItem(Globals.Payload);
+
+
+                    //Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => chatScreen.AddItem(Globals.Payload)));
                 }
+                                
+
                 client.Close();
                 empfaenger.Stop();
             }
@@ -100,5 +118,6 @@ namespace Projekt_Gruppe_2
             dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
         }
+       
     }
 }

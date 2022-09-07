@@ -32,11 +32,8 @@
         <Border Background="CornflowerBlue" Grid.RowSpan="6" Grid.ColumnSpan="6">
             <Image x:Name="konfettiGif" gif:ImageBehavior.AnimatedSource="Bilder/confetti-45.gif" Visibility="Hidden"/>
         </Border>
-        <ListBox x:Name="listChat" ItemsSource="{Binding Path=Text, ElementName=textboxNachricht}" FontFamily="helvetica"  Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="3" Opacity="0.9">
-            <ListBox.Resources>
-                <Image x:Key="g" Source="Bilder/emoji-background.png"/>
-            </ListBox.Resources>
-        </ListBox>
+        <ListBox x:Name="listChat"  FontFamily="helvetica"  Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="3" Opacity="0.9"/>
+
         <TextBox x:Name="textboxNachricht" Opacity="0.9" FontFamily="helvetica" GotMouseCapture="textboxNachricht_GotMouseCapture" Margin="0,0,100,0" KeyDown="textboxNachricht_KeyDown" Text="Deine Nachricht..."  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" />
         <Button x:Name="btnSenden" Style="{StaticResource RoundButtonTemplate}" Height="40" Width="80" Cursor="Hand" Grid.Column="3" Grid.Row="4" Click="btnSenden_Click" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Senden"/>
         <Button x:Name="btnData" Style="{StaticResource RoundButtonTemplate}" Click="btnData_Click" Width="30" Height="30" Grid.Column="1" Grid.Row="5" Cursor="Hand" HorizontalAlignment="Left" Background="Transparent">

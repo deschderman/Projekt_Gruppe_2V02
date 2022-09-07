@@ -20,6 +20,8 @@ using Projekt_Gruppe_2_test;
 using System.Threading;
 using WpfAnimatedGif;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace Projekt_Gruppe_2
 {
@@ -30,6 +32,9 @@ namespace Projekt_Gruppe_2
     public partial class ChatScreen : Window
     {
 
+        private ObservableCollection<Message> _message = new ObservableCollection<Message>();
+        private Message _selectedMessage;
+
         Message message = new Message()
         {
             Port = 13000,
@@ -39,21 +44,20 @@ namespace Projekt_Gruppe_2
 
         AliasEmpfänger empf = new AliasEmpfänger();
         TcpSender sender1 = new TcpSender();
-        Thread thread1 = new Thread(threadAufgabe);
-
         public ChatScreen()
         {
+            Thread thread1 = new Thread(threadAufgabe);   
             empf.AliasEmpf = Globals.empfName;
             InitializeComponent();
             lblNameEmpf.Content = "Chat mit " + empf.AliasEmpf;
-            
-            thread1.Start();           
-            
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => thread1.Start()));
+           // thread1.Start();            
         }
 
+        
         private void btnSenden_Click(object sender, RoutedEventArgs e)
-        {
-            listChat.HorizontalContentAlignment = HorizontalAlignment.Left;
+        {          
+
             if (string.IsNullOrEmpty(message.DataFormat))
             {
                 message.DataFormat = "textnachricht";
@@ -89,11 +93,11 @@ namespace Projekt_Gruppe_2
             
                 //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
                 sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
-            
+                Globals.messageList.Add(message);
                 //setzte DataFormat wieder auf null
                 message.DataFormat = string.Empty;
             if (textboxNachricht.Text != string.Empty)
-            {
+            {                
                 DateTime datetime = UnixTimeStampToDateTime(message.TimestampUnix);
                 string date = datetime.ToString("yyyy-MM-dd");
                 if (date == Globals.date)
@@ -112,15 +116,24 @@ namespace Projekt_Gruppe_2
                 MessageBox.Show("Bitte gib eine Nachricht ein.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             textboxNachricht.Clear();
-                    
-            
+
+            //zum Ende scrollen
+            listChat.TabIndex = listChat.Items.Count - 1;
+
+
+        }
+
+        internal static void AddItem()
+        {
+            throw new NotImplementedException();
         }
 
         public static void threadAufgabe()
         {            
             TcpEmpfaenger empfaenger = new TcpEmpfaenger();
             int port = 13000;
-            empfaenger.empfangen(port);            
+            empfaenger.empfangen(port);    
+            
         }
                         
 
@@ -139,7 +152,7 @@ namespace Projekt_Gruppe_2
         private void btnData_Click(object sender, RoutedEventArgs e)
         {
             // Create OpenFileDialog
-            Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
+            OpenFileDialog openFileDlg = new OpenFileDialog();
 
             // Launch OpenFileDialog by calling ShowDialog method
             Nullable<bool> result = openFileDlg.ShowDialog();
@@ -201,20 +214,31 @@ namespace Projekt_Gruppe_2
         }
 
         private void btnAktualisieren_Click(object sender, RoutedEventArgs e)
-        {
-            listChat.HorizontalContentAlignment = HorizontalAlignment.Right;
-            //while (true)
-            //{
-                //if (Globals.Payload != string.Empty)
-                //{
-                    listChat.Items.Add(Globals.Payload);
-                    Globals.Payload = string.Empty;
+        {                  
+            /*if(Globals.Payload != string.Empty)
+            {
+                SoundPlayerAction soundPlayerAction = new SoundPlayerAction();
+                soundPlayerAction.Source = new Uri(@"Sound\chat.wav", UriKind.RelativeOrAbsolute);
 
-            //}
-            //else btnAktualisieren_Click(sender, e);
-            //}
-            
+                EventTrigger eventTrigger = new EventTrigger(); // this is the event you want to trigger the sound effect.
+
+                eventTrigger.Actions.Add(soundPlayerAction);
+                Triggers.Add(eventTrigger); // Add this event trigger to Window.Triggers collection.
+            }*/
+            listChat.Items.Add(Globals.Payload);
+            Globals.Payload = string.Empty;
+
+            //zum Ende scrollen
+            listChat.TabIndex = listChat.Items.Count - 1;
+
+
         }
+
+        public void AddItem(string s)
+        {
+            listChat.Items.Add(s);
+        }
+
     }
 
 }

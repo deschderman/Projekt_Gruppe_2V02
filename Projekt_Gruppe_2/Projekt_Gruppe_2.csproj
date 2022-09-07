@@ -22,6 +22,7 @@
     <None Remove="Bilder\return.ico" />
     <None Remove="Bilder\sync.ico" />
     <None Remove="Bilder\wechat2.ico" />
+    <None Remove="Sound\chat.mp3" />
   </ItemGroup>
 
   <ItemGroup>
