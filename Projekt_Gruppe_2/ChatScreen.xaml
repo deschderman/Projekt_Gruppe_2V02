@@ -52,11 +52,7 @@
                 <Image Source="Bilder/party.ico"/>
             </StackPanel>            
         </Button>
-        <Button x:Name="btnAktualisieren" Background="Transparent" Style="{StaticResource RoundButtonTemplate}" Grid.Column="3" Grid.Row="0" Height="50" Width="50" HorizontalAlignment="Right" Click="btnAktualisieren_Click" Cursor="Hand">
-            <StackPanel>
-                <Image Source="Bilder/sync.ico"/>
-            </StackPanel>
-        </Button>
+        
 
     </Grid>
 </Window>

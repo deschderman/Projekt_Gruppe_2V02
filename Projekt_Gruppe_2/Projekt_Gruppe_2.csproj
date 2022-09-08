@@ -25,6 +25,13 @@
     <None Remove="Sound\chat.mp3" />
     <None Remove="Sound\notification.wav" />
     <None Remove="Sound\notification2.wav" />
+    <None Remove="Sound\samba.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SplashScreen Include="Sound\samba.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </SplashScreen>
   </ItemGroup>
 
   <ItemGroup>
@@ -42,8 +49,23 @@
     <Resource Include="Bilder\return.ico" />
     <Resource Include="Bilder\sync.ico" />
     <Resource Include="Bilder\wechat2.ico" />
-    <Resource Include="Sound\notification.wav" />
+    <EmbeddedResource Include="Sound\notification.wav" />
     <EmbeddedResource Include="Sound\notification2.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resource1.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

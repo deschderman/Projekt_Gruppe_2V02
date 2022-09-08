@@ -13,6 +13,7 @@ namespace Projekt_Gruppe_2
         public static string IPEmpfaenger;
         public static string AliasSender;
         public static string Payload;
+        public static string showPayload;
         public static string date;
         public static List<Message> messageList = new List<Message>();
         public static string key;

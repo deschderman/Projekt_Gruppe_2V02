@@ -29,14 +29,14 @@ namespace Projekt_Gruppe_2
 
         AliasReceiver aliasReceiver = new AliasReceiver();
         TCPSender sender1 = new TCPSender();
+        
         public ChatScreen()
-        {
+        {            
             Thread thread1 = new Thread(threadDoWork);
-            
             aliasReceiver.aliasReceiver = Globals.empfName;
             InitializeComponent();
             lblNameReceiver.Content = "Chat mit " + aliasReceiver.aliasReceiver;
-            thread1.Start();
+            thread1.Start();            
         }
 
         
@@ -113,11 +113,11 @@ namespace Projekt_Gruppe_2
         }
 
 
-        public static void threadDoWork()
+        public void threadDoWork()
         {            
             TCPReceiver tcpReceiver = new TCPReceiver();
             int port = 13000;
-            tcpReceiver.receive(port);                
+            tcpReceiver.receive(port, this);                
         }
                         
 
@@ -127,7 +127,7 @@ namespace Projekt_Gruppe_2
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             var newWindow = new Connection();            
             this.Close();
             newWindow.Show();
@@ -164,19 +164,27 @@ namespace Projekt_Gruppe_2
             }
         }
 
+        
+
         private void btnKonfetti_Click(object sender, RoutedEventArgs e)
         {
+           // string path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "\\Sound\\samba.wav";
+            //SoundPlayer player = new SoundPlayer(Properties.Ressources.samba);
+
             if (konfettiGif.Visibility == Visibility.Hidden)
             {
                 konfettiGif.Visibility = Visibility.Visible;
                 listChat.Visibility = Visibility.Hidden;
                 textboxMessage.Visibility = Visibility.Hidden;
+                //player.Load();
+                //player.Play();
             }
             else if (konfettiGif.Visibility == Visibility.Visible)
             {
                 konfettiGif.Visibility = Visibility.Hidden;
                 listChat.Visibility = Visibility.Visible;
                 textboxMessage.Visibility = Visibility.Visible;
+                //player.Stop();
             }
         }
 
@@ -198,18 +206,7 @@ namespace Projekt_Gruppe_2
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
-        }
-
-        private void btnAktualisieren_Click(object sender, RoutedEventArgs e)
-        {
-            /*
-            listChat.Items.Add(Globals.Payload);
-            Globals.Payload = string.Empty;
-
-            //zum Ende scrollen
-            listChat.TabIndex = listChat.Items.Count - 1;
-            */
-        }
+        }                
 
         /*
         public static string GetRandomKey(int length)
