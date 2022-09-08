@@ -18,6 +18,10 @@ namespace Projekt_Gruppe_2
         public string DataFormat { get; set; }
         public string IPEmpfaenger { get; set; }
         public int Port { get; set; }
-        
+        public override string ToString()
+        {
+            return "Message: " + TimestampUnix + " Payload: " + Payload + " IPSender: " + IPSender + " AliasSender: " + AliasSender + " DataFormat: " + DataFormat + " IPEmpfaenger: " + IPEmpfaenger + " Port: " + Port;
+        }
+
     }
 }

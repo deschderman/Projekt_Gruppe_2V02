@@ -1,20 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Collections.Generic;using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 
 namespace Projekt_Gruppe_2
 {
@@ -22,7 +7,19 @@ namespace Projekt_Gruppe_2
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-   
+    public static class Globals
+    {
+        public static string empfName;
+        public static string IPEmpfaenger;
+        public static string AliasSender;
+        public static string Payload;
+        public static string date;
+        public static List<Message> messageList = new List<Message>();
+        public static string key;
+        public static int messageCounter;
+        public static int port;
+    }
+
     public partial class MainWindow : Window
     {
         
@@ -85,7 +82,7 @@ namespace Projekt_Gruppe_2
                             }else if (txtboxUsername.Text != string.Empty)
                             {
                                 valid = true;
-                                var newWindow = new Verbindung();
+                                var newWindow = new Connection();
                                 this.Close();
                                 newWindow.Show();
                             }

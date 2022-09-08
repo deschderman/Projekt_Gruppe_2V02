@@ -1,27 +1,16 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Projekt_Gruppe_2_test;
 using System.Threading;
-using WpfAnimatedGif;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
-using System.Windows.Threading;
+using System.Media;
+using System.Security.Cryptography;
 
 namespace Projekt_Gruppe_2
 {
@@ -31,10 +20,6 @@ namespace Projekt_Gruppe_2
     /// </summary>
     public partial class ChatScreen : Window
     {
-
-        private ObservableCollection<Message> _message = new ObservableCollection<Message>();
-        private Message _selectedMessage;
-
         Message message = new Message()
         {
             Port = 13000,
@@ -42,21 +27,20 @@ namespace Projekt_Gruppe_2
             AliasSender = Globals.AliasSender
         };
 
-        AliasEmpfänger empf = new AliasEmpfänger();
-        TcpSender sender1 = new TcpSender();
+        AliasReceiver aliasReceiver = new AliasReceiver();
+        TCPSender sender1 = new TCPSender();
         public ChatScreen()
         {
-            Thread thread1 = new Thread(threadAufgabe);
-            thread1.IsBackground = true;
-            empf.AliasEmpf = Globals.empfName;
+            Thread thread1 = new Thread(threadDoWork);
+            
+            aliasReceiver.aliasReceiver = Globals.empfName;
             InitializeComponent();
-            lblNameEmpf.Content = "Chat mit " + empf.AliasEmpf;
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => thread1.Start()));
-           // thread1.Start();            
+            lblNameReceiver.Content = "Chat mit " + aliasReceiver.aliasReceiver;
+            thread1.Start();
         }
 
         
-        private void btnSenden_Click(object sender, RoutedEventArgs e)
+        private void btnSend_Click(object sender, RoutedEventArgs e)
         {          
 
             if (string.IsNullOrEmpty(message.DataFormat))
@@ -64,20 +48,22 @@ namespace Projekt_Gruppe_2
                 message.DataFormat = "textnachricht";
 
                 //die Nachricht die übermittelt werden soll wird in einem Bytearray geschrieben
-                Byte[] payload = Encoding.ASCII.GetBytes(textboxNachricht.Text);
+                //Byte[] payload = Encoding.ASCII.GetBytes(textboxMessage.Text);
+                Byte[] payload = Encoding.ASCII.GetBytes(encryption(textboxMessage.Text));
 
                 //setzte vom Objekt den Payload
                 message.Payload = payload;
             }
 
-
             //setzte vom Objekt die aktuelle Zeit
             DateTime localDate = DateTime.Now;
             long unixTime = ((DateTimeOffset)localDate).ToUnixTimeSeconds();
             message.TimestampUnix = unixTime;
+            
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
-                socket.Connect("8.8.8.8", 65530);
+                socket.ConnectAsync("8.8.8.8", 65530);
+                //socket.Connect("8.8.8.8", 65530);
                 IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
                 //versuch meine ip-Adresse zu bekommen, da wir mehrere IP-Adressen haben, muss die richtige gefunden werden
                 //wir verbinden uns hierfür mit einem UDP-Socket und lesen dann dessen lokalen Endpunkt aus
@@ -87,65 +73,62 @@ namespace Projekt_Gruppe_2
                 message.IPSender = localIP;
             }
             
-            //erstelle aus dem Objekt einen String
-                string stringjson = JsonConvert.SerializeObject(message);
-        
-
+            //erstelle aus dem Objekt einen String und verschlüssele es
+            string stringjson = JsonConvert.SerializeObject(message);
             
-                //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
-                sender1.senden(Globals.IPEmpfaenger, stringjson, message.Port);
-                Globals.messageList.Add(message);
-                //setzte DataFormat wieder auf null
-                message.DataFormat = string.Empty;
-            if (textboxNachricht.Text != string.Empty)
+            //encryption(stringjson);
+                        
+            //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
+            sender1.send(Globals.IPEmpfaenger, stringjson, message.Port);
+
+            Globals.messageList.Add(message);
+
+            //setzte DataFormat wieder auf null
+            message.DataFormat = string.Empty;
+
+            if (textboxMessage.Text != string.Empty)
             {                
                 DateTime datetime = UnixTimeStampToDateTime(message.TimestampUnix);
                 string date = datetime.ToString("yyyy-MM-dd");
                 if (date == Globals.date)
                 {
                     string time = datetime.ToString("HH:mm:ss");
-                    listChat.Items.Add(time + " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+                    listChat.Items.Add(time + " " + Globals.AliasSender + ": " + textboxMessage.Text);
                 }
                 else
                 {
-                    listChat.Items.Add(datetime + " " + Globals.AliasSender + ": " + textboxNachricht.Text);                                
+                    listChat.Items.Add(datetime + " " + Globals.AliasSender + ": " + textboxMessage.Text);                                
                     Globals.date = date;
                 }
             }   
-            else if (textboxNachricht.Text == string.Empty)
+            else if (textboxMessage.Text == string.Empty)
             {
                 MessageBox.Show("Bitte gib eine Nachricht ein.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            textboxNachricht.Clear();
+
+            textboxMessage.Clear();
 
             //zum Ende scrollen
             listChat.TabIndex = listChat.Items.Count - 1;
-
-
         }
 
-        internal static void AddItem()
-        {
-            throw new NotImplementedException();
-        }
 
-        public static void threadAufgabe()
+        public static void threadDoWork()
         {            
-            TcpEmpfaenger empfaenger = new TcpEmpfaenger();
+            TCPReceiver tcpReceiver = new TCPReceiver();
             int port = 13000;
-            empfaenger.empfangen(port);    
-            
+            tcpReceiver.receive(port);                
         }
                         
 
-        private void textboxNachricht_GotMouseCapture(object sender, MouseEventArgs e)
+        private void textboxMessage_GotMouseCapture(object sender, MouseEventArgs e)
         {
-            textboxNachricht.Clear();
+            textboxMessage.Clear();
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            var newWindow = new Verbindung();            
+            var newWindow = new Connection();            
             this.Close();
             newWindow.Show();
         }
@@ -164,19 +147,20 @@ namespace Projekt_Gruppe_2
             { 
                 byte[] data = StreamFile(openFileDlg.FileName);
                 string path = openFileDlg.FileName;
-                string extension = System.IO.Path.GetExtension(path);
+                string extension = Path.GetExtension(path);
+
                 //SaveByteArrayToFileWithFileStream(data, extension);
-                textboxNachricht.Text = openFileDlg.FileName;
+                textboxMessage.Text = openFileDlg.FileName;
                 message.Payload = data;
                 message.DataFormat = extension;
             }
         }
 
-        private void textboxNachricht_KeyDown(object sender, KeyEventArgs e)
+        private void textboxMessage_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return)
             {
-                btnSenden_Click(sender, e);                
+                btnSend_Click(sender, e);                
             }
         }
 
@@ -186,15 +170,16 @@ namespace Projekt_Gruppe_2
             {
                 konfettiGif.Visibility = Visibility.Visible;
                 listChat.Visibility = Visibility.Hidden;
-                textboxNachricht.Visibility = Visibility.Hidden;
+                textboxMessage.Visibility = Visibility.Hidden;
             }
             else if (konfettiGif.Visibility == Visibility.Visible)
             {
                 konfettiGif.Visibility = Visibility.Hidden;
                 listChat.Visibility = Visibility.Visible;
-                textboxNachricht.Visibility = Visibility.Visible;
+                textboxMessage.Visibility = Visibility.Visible;
             }
         }
+
         public byte[] StreamFile(string filename)
         {
             byte[] fileData = null;
@@ -206,6 +191,7 @@ namespace Projekt_Gruppe_2
             }
             return fileData;
         }
+
         public static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
@@ -215,31 +201,33 @@ namespace Projekt_Gruppe_2
         }
 
         private void btnAktualisieren_Click(object sender, RoutedEventArgs e)
-        {                  
-            /*if(Globals.Payload != string.Empty)
-            {
-                SoundPlayerAction soundPlayerAction = new SoundPlayerAction();
-                soundPlayerAction.Source = new Uri(@"Sound\chat.wav", UriKind.RelativeOrAbsolute);
-
-                EventTrigger eventTrigger = new EventTrigger(); // this is the event you want to trigger the sound effect.
-
-                eventTrigger.Actions.Add(soundPlayerAction);
-                Triggers.Add(eventTrigger); // Add this event trigger to Window.Triggers collection.
-            }*/
+        {
+            /*
             listChat.Items.Add(Globals.Payload);
             Globals.Payload = string.Empty;
 
             //zum Ende scrollen
             listChat.TabIndex = listChat.Items.Count - 1;
-
-
+            */
         }
 
-        public void AddItem(string s)
+        /*
+        public static string GetRandomKey(int length)
         {
-            listChat.Items.Add(s);
+            byte[] rgb = new byte[length];
+            RNGCryptoServiceProvider rngCrypt = new RNGCryptoServiceProvider();
+            rngCrypt.GetBytes(rgb);
+            return Convert.ToBase64String(rgb);
         }
+        */
 
+        private string encryption(string _text)
+        {
+            //Globals.key = GetRandomKey(32);            
+            Globals.key = "Xn2r5u8x/A?D(G+KbPeShVmYq3s6v9y$";          
+            var encryptedString = AesOperation.EncryptString( Globals.key, _text);
+            
+            return encryptedString;
+        }        
     }
-
 }

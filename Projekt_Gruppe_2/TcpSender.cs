@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Projekt_Gruppe_2
 {
-    class TcpSender
+    class TCPSender
     {
-        public void senden(string ipAdresse, string nachricht, int port)
+        public void send(string ipAdresse, string nachricht, int port)
         {
             //erstelle TcpClient zum verschicken der Nachricht
             TcpClient client = new TcpClient(ipAdresse, port);
@@ -27,6 +27,7 @@ namespace Projekt_Gruppe_2
             //Console.WriteLine("ich: {0}", nachricht);
             stream.Close();
             client.Close();
+            client.Dispose();
         }
     }
 }

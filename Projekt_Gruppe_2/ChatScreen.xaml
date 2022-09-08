@@ -34,8 +34,8 @@
         </Border>
         <ListBox x:Name="listChat"  FontFamily="helvetica"  Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="3" Opacity="0.9"/>
 
-        <TextBox x:Name="textboxNachricht" Opacity="0.9" FontFamily="helvetica" GotMouseCapture="textboxNachricht_GotMouseCapture" Margin="0,0,100,0" KeyDown="textboxNachricht_KeyDown" Text="Deine Nachricht..."  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" />
-        <Button x:Name="btnSenden" Style="{StaticResource RoundButtonTemplate}" Height="40" Width="80" Cursor="Hand" Grid.Column="3" Grid.Row="4" Click="btnSenden_Click" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Senden"/>
+        <TextBox x:Name="textboxMessage" Opacity="0.9" FontFamily="helvetica" GotMouseCapture="textboxMessage_GotMouseCapture" Margin="0,0,100,0" KeyDown="textboxMessage_KeyDown" Text="Deine Nachricht..."  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" />
+        <Button x:Name="btnSenden" Style="{StaticResource RoundButtonTemplate}" Height="40" Width="80" Cursor="Hand" Grid.Column="3" Grid.Row="4" Click="btnSend_Click" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Senden"/>
         <Button x:Name="btnData" Style="{StaticResource RoundButtonTemplate}" Click="btnData_Click" Width="30" Height="30" Grid.Column="1" Grid.Row="5" Cursor="Hand" HorizontalAlignment="Left" Background="Transparent">
             <StackPanel>
                 <Image Source="Bilder/gamepad.ico"/>
@@ -46,7 +46,7 @@
                 <Image Source="Bilder/return.ico"/>
             </StackPanel>
         </Button>
-        <Label x:Name="lblNameEmpf" FontSize="22"  Style="{StaticResource Label}" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.ColumnSpan="2" Width="220" Height="40"/>
+        <Label x:Name="lblNameReceiver" FontSize="22"  Style="{StaticResource Label}" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.ColumnSpan="2" Width="220" Height="40"/>
         <Button x:Name="btnKonfetti" Background="Transparent" Style="{StaticResource RoundButtonTemplate}" Grid.Column="2" Grid.Row="5" Height="30" Width="30" Click="btnKonfetti_Click">
             <StackPanel>
                 <Image Source="Bilder/party.ico"/>

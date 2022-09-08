@@ -23,6 +23,8 @@
     <None Remove="Bilder\sync.ico" />
     <None Remove="Bilder\wechat2.ico" />
     <None Remove="Sound\chat.mp3" />
+    <None Remove="Sound\notification.wav" />
+    <None Remove="Sound\notification2.wav" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +42,8 @@
     <Resource Include="Bilder\return.ico" />
     <Resource Include="Bilder\sync.ico" />
     <Resource Include="Bilder\wechat2.ico" />
+    <Resource Include="Sound\notification.wav" />
+    <EmbeddedResource Include="Sound\notification2.wav" />
   </ItemGroup>
 
 </Project>
