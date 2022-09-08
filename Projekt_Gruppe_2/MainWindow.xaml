@@ -12,7 +12,7 @@
         Title="ChatApp-Login" Height="450" Width="300">
 
     <Grid>
-
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="4*"/>

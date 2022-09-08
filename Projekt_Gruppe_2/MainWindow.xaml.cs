@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Data;
-using System.Data.SqlTypes;
 
 namespace Projekt_Gruppe_2
 {
@@ -158,39 +158,23 @@ namespace Projekt_Gruppe_2
             newWindow.Show();
         }
 
+
         private void dbcreate_Click(object sender, RoutedEventArgs e)
         {
-            String str;
-            SqlConnection myConn = new SqlConnection("Server=localhost;Integrated security=SSPI;database=master");
+            string mainconn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            SqlConnection sqlconn = new SqlConnection(mainconn); 
+            string sqlquery = "use master; Drop database Messanger; create database Messanger; use Messanger; " +
+                "CREATE TABLE LoginData([Benutzer_ID][int] IDENTITY(1, 1) PRIMARY KEY NOT NULL, [Benutzername] [nvarchar](255) NOT NULL, [Passwort] [varchar](255) NOT NULL, [Status] [int] NULL,); " +
+                "Insert into LoginData values ('test','81dc9bdb52d04dc20036dbd8313ed055','1'); " +
+                "create table Users (User_ID int IDENTITY(1,1) PRIMARY KEY NOT NULL, IPSender nvarchar(256), Port int, AliasSender nvarchar(256), Status int NOT NULL); " +
+                "create table Messages(Message_ID int IDENTITY(1,1) PRIMARY KEY NOT NULL, User_ID int Foreign Key References Users(User_ID), TimestampUnix float, DataFormat nvarchar(256), Payload varbinary(max), IPEmpfaenger nvarchar(256)); ";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+            sqlconn.Close();
+            MessageBox.Show("DataBase is Created Successfully");
 
-            str = "CREATE DATABASE MyDatabase ON PRIMARY " +
-             "(NAME = Messanger, " +
-             "FILENAME = 'C:\\MessangerDatabaseData.mdf', " +
-             "SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%)" +
-             "LOG ON (NAME = MessangerDatabase_Log, " +
-             "FILENAME = 'C:\\MessangerDatabase.ldf', " +
-             "SIZE = 1MB, " +
-             "MAXSIZE = 5MB, " +
-             "FILEGROWTH = 10%)";
-
-            SqlCommand myCommand = new SqlCommand(str, myConn);
-            try
-            {
-                myConn.Open();
-                myCommand.ExecuteNonQuery();
-                MessageBox.Show("DataBase is Created Successfully");
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "MyProgram");
-            }
-            finally
-            {
-                if (myConn.State == ConnectionState.Open)
-                {
-                    myConn.Close();
-                }
-            }
+            
             /*
             DataSet database = new DataSet("Messanger");
             DataTable LoginData = database.Tables.Add("LoginData");
@@ -241,8 +225,8 @@ namespace Projekt_Gruppe_2
             Messages.Columns.Add("IPEmpfaenger", typeof(string));
 
             */
-            MessageBox.Show("Erfogreich erstellt");
+            MessageBox.Show("Datensatz erfolgreich eingefügt. \n username: test \n passwort: 1234");
         }
     }
-}
+   }
 
