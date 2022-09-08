@@ -24,9 +24,10 @@
         <Border Background="CornflowerBlue" Grid.RowSpan="5">
             <Image Margin="110,49,105,300" Stretch="Fill" Source="Bilder/wechat2.ico"/>
         </Border>
-        <Button x:Name="btnClose" Style="{StaticResource RoundButtonTemplate}" Grid.Row="3" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="40" Width="100" Content="Verlassen" Click="btnClose_Click"/>
-        <TextBox x:Name="txtboxUsername" Style="{StaticResource TextBox}" BorderBrush="Transparent" FontStyle="Italic" Grid.Row="1" Height="30" Width="200" Text="Username" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" GotMouseCapture="txtboxUsername_GotMouseCapture"/>
-        <Button x:Name="btnAnmelden" Style="{StaticResource RoundButtonTemplate}" Click="btnAnmelden_Click" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Height="40" Width="100" Content="Anmelden" Grid.Row="2" Cursor="Hand"/>
-        <PasswordBox x:Name="pwdbox"  BorderBrush="Transparent" Grid.Row="1" VerticalContentAlignment="Center" Height="30" Width="200" HorizontalAlignment="Center" VerticalAlignment="Top" HorizontalContentAlignment="Center" Password="Passwort" KeyDown="pwdbox_KeyDown" Margin="0,138,0,0"/>
+        <Button x:Name="btnClose" TabIndex="4" Style="{StaticResource RoundButtonTemplate}" Grid.Row="3" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="40" Width="100" Content="Verlassen" Click="btnClose_Click"/>
+        <TextBox x:Name="txtboxUsername" TabIndex="1" Style="{StaticResource TextBox}" BorderBrush="Transparent" FontStyle="Italic" Grid.Row="1" Height="30" Width="200" Text="Username" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" GotMouseCapture="txtboxUsername_GotMouseCapture"/>
+        <Button x:Name="btnAnmelden" TabIndex="3" Style="{StaticResource RoundButtonTemplate}" Click="btnAnmelden_Click" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Height="40" Width="100" Content="Anmelden" Grid.Row="2" Cursor="Hand"/>
+        <Button x:Name="dbcreate" TabIndex="5" Content="Create DB" Margin="25,40,0,10" Click="dbcreate_Click" Grid.Row="3" HorizontalAlignment="Left"/>
+        <PasswordBox x:Name="pwdbox"  TabIndex="2" BorderBrush="Transparent" Grid.Row="1" VerticalContentAlignment="Center" Height="30" Width="200" HorizontalAlignment="Center" VerticalAlignment="Top" HorizontalContentAlignment="Center" Password="Passwort" KeyDown="pwdbox_KeyDown" Margin="0,138,0,0"/>
     </Grid>
 </Window>
