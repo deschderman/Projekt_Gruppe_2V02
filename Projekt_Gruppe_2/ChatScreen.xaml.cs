@@ -11,6 +11,9 @@ using Projekt_Gruppe_2_test;
 using System.Threading;
 using System.Media;
 using System.Security.Cryptography;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Configuration;
 
 namespace Projekt_Gruppe_2
 {
@@ -29,17 +32,19 @@ namespace Projekt_Gruppe_2
 
         AliasReceiver aliasReceiver = new AliasReceiver();
         TCPSender sender1 = new TCPSender();
+        
         public ChatScreen()
-        {
+        {            
             Thread thread1 = new Thread(threadDoWork);
-            
             aliasReceiver.aliasReceiver = Globals.empfName;
             InitializeComponent();
             lblNameReceiver.Content = "Chat mit " + aliasReceiver.aliasReceiver;
             thread1.Start();
+            ImportFromDatabase();
+
         }
 
-        
+
         private void btnSend_Click(object sender, RoutedEventArgs e)
         {          
 
@@ -48,8 +53,8 @@ namespace Projekt_Gruppe_2
                 message.DataFormat = "textnachricht";
 
                 //die Nachricht die übermittelt werden soll wird in einem Bytearray geschrieben
-                //Byte[] payload = Encoding.ASCII.GetBytes(textboxMessage.Text);
-                Byte[] payload = Encoding.ASCII.GetBytes(encryption(textboxMessage.Text));
+                Byte[] payload = Encoding.ASCII.GetBytes(textboxMessage.Text);
+                //Byte[] payload = Encoding.ASCII.GetBytes(encryption(textboxMessage.Text));
 
                 //setzte vom Objekt den Payload
                 message.Payload = payload;
@@ -81,7 +86,8 @@ namespace Projekt_Gruppe_2
             //starte die Methode senden mit der IP-Empfänger, dem stringjson und dem port
             sender1.send(Globals.IPEmpfaenger, stringjson, message.Port);
 
-            Globals.messageList.Add(message);
+            Globals.messageList.Insert(Globals.count, message);
+            Globals.count++;
 
             //setzte DataFormat wieder auf null
             message.DataFormat = string.Empty;
@@ -113,11 +119,11 @@ namespace Projekt_Gruppe_2
         }
 
 
-        public static void threadDoWork()
+        public void threadDoWork()
         {            
             TCPReceiver tcpReceiver = new TCPReceiver();
             int port = 13000;
-            tcpReceiver.receive(port);                
+            tcpReceiver.receive(port, this);                
         }
                         
 
@@ -127,10 +133,12 @@ namespace Projekt_Gruppe_2
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             var newWindow = new Connection();            
             this.Close();
             newWindow.Show();
+
+            GetUserID();
         }
 
         private void btnData_Click(object sender, RoutedEventArgs e)
@@ -164,19 +172,27 @@ namespace Projekt_Gruppe_2
             }
         }
 
+        
+
         private void btnKonfetti_Click(object sender, RoutedEventArgs e)
         {
+           // string path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "\\Sound\\samba.wav";
+            //SoundPlayer player = new SoundPlayer(Properties.Ressources.samba);
+
             if (konfettiGif.Visibility == Visibility.Hidden)
             {
                 konfettiGif.Visibility = Visibility.Visible;
                 listChat.Visibility = Visibility.Hidden;
                 textboxMessage.Visibility = Visibility.Hidden;
+                //player.Load();
+                //player.Play();
             }
             else if (konfettiGif.Visibility == Visibility.Visible)
             {
                 konfettiGif.Visibility = Visibility.Hidden;
                 listChat.Visibility = Visibility.Visible;
                 textboxMessage.Visibility = Visibility.Visible;
+                //player.Stop();
             }
         }
 
@@ -198,18 +214,7 @@ namespace Projekt_Gruppe_2
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
-        }
-
-        private void btnAktualisieren_Click(object sender, RoutedEventArgs e)
-        {
-            /*
-            listChat.Items.Add(Globals.Payload);
-            Globals.Payload = string.Empty;
-
-            //zum Ende scrollen
-            listChat.TabIndex = listChat.Items.Count - 1;
-            */
-        }
+        }                
 
         /*
         public static string GetRandomKey(int length)
@@ -228,6 +233,135 @@ namespace Projekt_Gruppe_2
             var encryptedString = AesOperation.EncryptString( Globals.key, _text);
             
             return encryptedString;
-        }        
+        }
+
+
+        //Database
+        //Database
+
+
+        public void ImportFromDatabase()
+        {
+            return;
+            GetUserID();
+            SqlConnection con = new SqlConnection();
+            SqlCommand com = new SqlCommand();
+            SqlDataReader dr;
+            con.ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
+            con.Open();
+            com.Connection = con;
+            com.CommandText = "SELECT TimestampUnix, CONVERT(VARCHAR(1000), Payload) from Messages"/* WHERE User_ID = '" + Globals.User_ID + "'"*/;
+
+            //Result= User_ID;
+            dr = com.ExecuteReader();
+            /*
+            while (dr.Read())
+            {
+                //Debug.WriteLine("{0}", dr.GetInt32(0));
+                Globals.User_ID = dr.GetInt32(0);
+            }
+            */
+            /*
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    Debug.WriteLine("{0}\t{1}\t{2}", dr.GetFloat(0),
+                        /*dr.GetString(1), dr.GetString(1));
+                    //listChat.Items.Add(DBTime + " " + Globals.EmpfName + ": " + DBPayload);
+                }
+            }
+    */
+            while (dr.Read())
+            {
+                Debug.WriteLine("{0}\t{1}", Convert.ToDouble(dr.GetFloat(0)),
+                    /*dr.GetString(1), */Convert.ToDouble(dr.GetString(1)));
+                //listChat.Items.Add(DBTime + " " + Globals.EmpfName + ": " + DBPayload);
+
+            }
+
+            dr.Close();
+            con.Close();
+
+            //listChat.Items.Add(time + " " + Globals.AliasSender + ": " + textboxNachricht.Text);
+            listChat.Items.Add("Test654");
+
+        }
+
+
+
+        public void GetUserID()
+        {
+
+
+            SqlConnection con = new SqlConnection();
+            SqlCommand com = new SqlCommand();
+            SqlDataReader dr;
+
+
+
+            for (var i = 1; i < Globals.messageList.Count + 1;)  //while
+            {
+                Debug.WriteLine("{0}", i);
+                Debug.WriteLine("{0}", Globals.messageList.Count);
+
+
+
+                con.ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
+                con.Open();
+                com.Connection = con;
+                com.CommandText = "SELECT User_ID from Users WHERE IPSender = '" + Globals.IPEmpfaenger + "'";
+
+                //Result= User_ID;
+                dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    //Debug.WriteLine("{0}", dr.GetInt32(0));
+                    Globals.User_ID = dr.GetInt32(0);
+                }
+                dr.Close();
+                con.Close();
+
+                WriteMessageInDatabase();
+
+            }
+            Globals.count = 0;
+            return;
+
+        }
+
+        public void WriteMessageInDatabase()
+        {
+
+            SqlConnection con = new SqlConnection();
+            SqlCommand com = new SqlCommand();
+            SqlDataReader dr;
+
+            con.ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
+            con.Open();
+            com.Connection = con;
+
+            //for 
+            com.CommandText = "INSERT INTO Messages VALUES (@uid, @ts, @df, @pl, @ipe)";
+            com.Parameters.AddWithValue("@uid", Globals.User_ID);
+            com.Parameters.AddWithValue("@ts", Globals.messageList[0].TimestampUnix);
+            com.Parameters.AddWithValue("@df", Globals.messageList[0].DataFormat);
+            com.Parameters.AddWithValue("@pl", Globals.messageList[0].Payload);
+            //Eigene IP
+            com.Parameters.AddWithValue("@ipe", Globals.IPSender);
+
+            int a = com.ExecuteNonQuery();
+            if (a == 1)
+            {
+                Debug.WriteLine("send to database");
+            }
+            con.Close();
+
+            Globals.messageList.RemoveAt(0);
+
+
+
+            return;
+        }
     }
 }

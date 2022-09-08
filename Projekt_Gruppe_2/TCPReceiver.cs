@@ -17,8 +17,9 @@ using System.Media;
 namespace Projekt_Gruppe_2
 {    
     public class TCPReceiver
-    {        
-        public void receive(int port)
+    {
+        private delegate void SetMessageDelegate(ChatScreen chatscreen);
+        public void receive(int port, ChatScreen chatscreen)
         {
             //wir wollen von allen empfangen können, deshalb IPAddress.Any
             TcpListener tcpListener = new TcpListener(IPAddress.Any, port); 
@@ -52,39 +53,43 @@ namespace Projekt_Gruppe_2
                     //aus dem String wieder ein Objekt der Klasse Message machen
                     Message message = JsonConvert.DeserializeObject<Message>(getMessage);
 
-                    Globals.messageList.Add(message);
-                    
+                    Globals.messageList.Insert(Globals.count, message);
+                    Globals.count++;
+
                     if (message.DataFormat == "textnachricht")
                     {
-                        sendMessage(message);
                         notification();
+                        sendMessage(message);                        
                     }
                     else
                     {
-                        sendFile(message);
                         notification();
+                        sendFile(message);                        
                     }
 
-                    //ChatScreen cs = Application.Current.MainWindow as ChatScreen;
-                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,new Action(() => cs.AddItem(Globals.Payload)));
+                    if (!string.IsNullOrEmpty(Globals.Payload) && Globals.Payload != Globals.showPayload)
+                    {
+                        chatscreen.listChat.Dispatcher.Invoke(new SetMessageDelegate(update), chatscreen);
 
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { ChatScreen chatScreen = new ChatScreen(); chatScreen.listChat.Items.Add(Globals.Payload); }));
-
-                    //ChatScreen chatScreen = new ChatScreen();
-                    //chatScreen.AddItem(Globals.Payload);
-                    //Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => chatScreen.AddItem(Globals.Payload)));
+                    }                    
                 }                                
-
                 client.Close();
                 tcpListener.Stop();
             }
+        }
+
+        private void update(ChatScreen chatscreen)
+        {
+            chatscreen.listChat.Items.Add(Globals.Payload);
+            Globals.showPayload = Globals.Payload;
         }
 
         private static void sendMessage(Message message)
         {
             //aus dem Bytearray des Payloads sollen auch wieder die ursprünglichen Charakter hergestellt werden
             string payload = Encoding.UTF8.GetString(message.Payload, 0, message.Payload.Length);
-            payload = decryption(payload);
+
+            //payload = decryption(payload);
             DateTime datetime = UnixTimeStampToDateTime(message.TimestampUnix);
             string date = datetime.ToString("yyyy-MM-dd");
 
@@ -104,9 +109,11 @@ namespace Projekt_Gruppe_2
 
         private static void notification()
         {
-            SoundPlayer player = new SoundPlayer("C:/Users/user/Documents/Praxisblock II/Projekt_Messenger/Projekt_Gruppe_2V02/Projekt_Gruppe_2/Sound/notification2.wav");
+            /*
+            SoundPlayer player = new SoundPlayer("C:/Users/user/Documents/Praxisblock II/Projekt_Messenger/Projekt_Gruppe_2V02/Projekt_Gruppe_2/Sound/notification.wav");
             player.Load();
             player.Play();
+            */
         }
 
         private static void sendFile(Message message)

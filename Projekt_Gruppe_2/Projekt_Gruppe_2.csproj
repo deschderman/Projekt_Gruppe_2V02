@@ -25,11 +25,17 @@
     <None Remove="Sound\chat.mp3" />
     <None Remove="Sound\notification.wav" />
     <None Remove="Sound\notification2.wav" />
+    <None Remove="Sound\samba.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Sound\samba.wav" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 
@@ -42,7 +48,7 @@
     <Resource Include="Bilder\return.ico" />
     <Resource Include="Bilder\sync.ico" />
     <Resource Include="Bilder\wechat2.ico" />
-    <Resource Include="Sound\notification.wav" />
+    <EmbeddedResource Include="Sound\notification.wav" />
     <EmbeddedResource Include="Sound\notification2.wav" />
   </ItemGroup>
 
