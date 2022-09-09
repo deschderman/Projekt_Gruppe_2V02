@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -28,7 +30,8 @@ namespace Projekt_Gruppe_2
             txtNameSender.Text = Globals.AliasSender;
             message.AliasSender = txtNameSender.Text;
             txtPort.Text = Convert.ToString(message.Port);
-            txtIPSender.Text = GetLocalIP();            
+            txtIPSender.Text = GetLocalIP();
+            Globals.IPSender = GetLocalIP();
         }
 
         private string GetLocalIP()
@@ -77,10 +80,13 @@ namespace Projekt_Gruppe_2
                 //setzte vom Objekt die Ip-Adresse
                 message.IPEmpfaenger = ipadresse;
                 Globals.IPEmpfaenger = ipadresse;
-                              
+
+                CheckInDatabase();
+                /*
                 var newWindow = new ChatScreen();
                 this.Close();
                 newWindow.Show();
+                */
             }
         }
 
@@ -90,6 +96,85 @@ namespace Projekt_Gruppe_2
             {
                 btnConnect_Click(sender, e);
             }
+        }
+
+
+        //Datenbankanbindung
+        //
+        //
+
+        private void CheckInDatabase()
+        {
+            SqlConnection con = new SqlConnection();
+            SqlCommand com = new SqlCommand();
+            SqlDataReader dr;
+            con.ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
+            con.Open();
+            com.Connection = con;
+            com.CommandText = "SELECT * FROM Users WHERE IPSender ='" + Globals.IPEmpfaenger + "'";
+            dr = com.ExecuteReader();
+            if (dr.Read())
+            {
+                if (Convert.ToBoolean(dr["Status"]) == true)
+                {
+                    con.Close();
+                    ExistingInDatabase();
+                }
+                else
+                {
+                    con.Close();
+                    SaveInDatabase();
+                }
+            }
+            else
+            {
+                con.Close();
+
+                //MessageBox.Show("Ein Fehler ist aufgetreten", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
+                //return;
+
+                SaveInDatabase();
+
+            }
+        }
+
+        private void SaveInDatabase()
+        {
+
+            AliasReceiver empf = new AliasReceiver();
+            empf.aliasReceiver = txtNameReceiver.Text;
+
+            SqlConnection con = new SqlConnection();
+            con.ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            con.Open();
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "INSERT INTO [Users] (IPSender, Port, AliasSender, Status) Values(@ip, '13000', @al, '1')";
+            cmd.Parameters.AddWithValue("@ip", Globals.IPEmpfaenger);
+            cmd.Parameters.AddWithValue("@al", empf.aliasReceiver);
+            cmd.Connection = con;
+            int a = cmd.ExecuteNonQuery();
+            if (a == 1)
+            {
+                MessageBox.Show("User erfolgreich hinzugefügt");
+            }
+            con.Close();
+
+            var newWindow = new ChatScreen();
+            this.Close();
+            newWindow.Show();
+
+        }
+
+
+        private void ExistingInDatabase()
+        {
+            MessageBox.Show("Diese IP-Adresse ist bereits bekannt", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
+            var newWindow = new ChatScreen();
+            this.Close();
+            newWindow.Show();
+
         }
 
     }
