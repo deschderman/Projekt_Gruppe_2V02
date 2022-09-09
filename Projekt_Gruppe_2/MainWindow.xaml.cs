@@ -162,16 +162,43 @@ namespace Projekt_Gruppe_2
         private void dbcreate_Click(object sender, RoutedEventArgs e)
         {
             string mainconn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
-            SqlConnection sqlconn = new SqlConnection(mainconn); 
-            string sqlquery = "use master; Drop database Messanger; create database Messanger; use Messanger; " +
-                "CREATE TABLE LoginData([Benutzer_ID][int] IDENTITY(1, 1) PRIMARY KEY NOT NULL, [Benutzername] [nvarchar](255) NOT NULL, [Passwort] [varchar](255) NOT NULL, [Status] [int] NULL,); " +
-                "Insert into LoginData values ('test','81dc9bdb52d04dc20036dbd8313ed055','1'); " +
-                "create table Users (User_ID int IDENTITY(1,1) PRIMARY KEY NOT NULL, IPSender nvarchar(256), Port int, AliasSender nvarchar(256), Status int NOT NULL); " +
-                "create table Messages(Message_ID int IDENTITY(1,1) PRIMARY KEY NOT NULL, User_ID int Foreign Key References Users(User_ID), TimestampUnix float, DataFormat nvarchar(256), Payload varbinary(max), IPEmpfaenger nvarchar(256)); ";
+            SqlConnection sqlconn0 = new SqlConnection(mainconn);
+            string sqlquery0 = "DROP DATABASE  IF EXISTS Messanger;";
+            SqlCommand sqlcomm0 = new SqlCommand(sqlquery0, sqlconn0);
+            sqlconn0.Open();
+            sqlcomm0.ExecuteNonQuery();
+            sqlconn0.Close();
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = "create database Messanger; ";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             sqlcomm.ExecuteNonQuery();
             sqlconn.Close();
+            SqlConnection sqlconn2 = new SqlConnection(mainconn);
+            string sqlquery2 = "CREATE TABLE LoginData([Benutzer_ID][int] IDENTITY(1, 1) PRIMARY KEY NOT NULL, [Benutzername] [nvarchar](255) NOT NULL, [Passwort] [varchar](255) NOT NULL, [Status] [int] NULL,);";
+            SqlCommand sqlcomm2 = new SqlCommand(sqlquery2, sqlconn2);
+            sqlconn2.Open();
+            sqlcomm2.ExecuteNonQuery();
+            sqlconn2.Close();
+            SqlConnection sqlconn3 = new SqlConnection(mainconn);
+            string sqlquery3 = "Insert into LoginData values ('test','81dc9bdb52d04dc20036dbd8313ed055','1');";
+            SqlCommand sqlcomm3 = new SqlCommand(sqlquery3, sqlconn3);
+            sqlconn3.Open();
+            sqlcomm3.ExecuteNonQuery();
+            sqlconn3.Close();
+            SqlConnection sqlconn4 = new SqlConnection(mainconn);
+            string sqlquery4 = "create table Users (User_ID int IDENTITY(1,1) PRIMARY KEY NOT NULL, IPSender nvarchar(256), Port int, AliasSender nvarchar(256), Status int NOT NULL);";
+            SqlCommand sqlcomm4 = new SqlCommand(sqlquery4, sqlconn4);
+            sqlconn4.Open();
+            sqlcomm4.ExecuteNonQuery();
+            sqlconn4.Close();
+            SqlConnection sqlconn5 = new SqlConnection(mainconn);
+            string sqlquery5 = "create table Messages(Message_ID int IDENTITY(1,1) PRIMARY KEY NOT NULL, User_ID int Foreign Key References Users(User_ID), TimestampUnix float, DataFormat nvarchar(256), Payload varbinary(max), IPEmpfaenger nvarchar(256));";
+            SqlCommand sqlcomm5 = new SqlCommand(sqlquery5, sqlconn5);
+            sqlconn5.Open();
+            sqlcomm5.ExecuteNonQuery();
+            sqlconn5.Close();
+
             MessageBox.Show("DataBase is Created Successfully");
 
             
